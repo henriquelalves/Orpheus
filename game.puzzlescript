@@ -23,6 +23,9 @@ Player
 .....
 .....
 
+StartingPlayerMark
+red
+
 PlayerAliveCheck
 #d61718 #ef6062 #001eef #e0e0e0
 .....
@@ -39,7 +42,7 @@ PlayerDead
 .1.1.
 .....
 
-PlayerLeft
+PlayerLeft A
 #d61718 #ef6062 #001eef #e0e0e0
 .00..
 .330.
@@ -47,7 +50,7 @@ PlayerLeft
 .222.
 .2.2.
 
-PlayerRight
+PlayerRight D
 #d61718 #ef6062 #001eef #e0e0e0
 ..00.
 .033.
@@ -55,7 +58,7 @@ PlayerRight
 .222.
 .2.2.
 
-PlayerUp
+PlayerUp W
 #d61718 #ef6062 #001eef #e0e0e0
 .000.
 .222.
@@ -63,7 +66,7 @@ PlayerUp
 .222.
 .2.2.
 
-PlayerDown
+PlayerDown S
 #d61718 #ef6062 #001eef #e0e0e0
 .000.
 .333.
@@ -103,7 +106,7 @@ BLACK #630000 #d61718
 00000
 00000
 
-WallAndEyeLock
+WallAndEyeLock E
 yellow #630000 #d61718
 .....
 .000.
@@ -127,7 +130,7 @@ yellow red
 .000.
 .....
 
-Door D
+Gate G
 yellow red
 .0.0.
 .0.0.
@@ -135,11 +138,11 @@ yellow red
 .0.0.
 .0.0.
 
-TempDoor
+TempGate
 yellow
 
 
-Stairs
+Stairs Q
 black yellow
 .....
 11...
@@ -152,10 +155,11 @@ LEGEND
 =======
 
 . = Background
-P = Player
 # = Wall
-W = WallAndEyeLock
-S = Stairs
+
+MovingPlayer = PlayerUp or PlayerDown or PlayerLeft or PlayerRight
+Solid = Wall or SeeingWall or SeeingWallTemp or SeenWall or Gate or TempGate
+VisionBlocker = Wall or SeeingWall or SeeingWallTemp or SeenWall
 
 =======
 SOUNDS
@@ -166,22 +170,28 @@ COLLISIONLAYERS
 ================
 
 Background
-Player, PlayerDead, Wall, SeenWall, SeeingWall, SeeingWallTemp, Door, TempDoor
+Stairs
+Player, PlayerDead, Wall, SeenWall, SeeingWall, SeeingWallTemp, Gate, TempGate
 PlayerLeft, PlayerRight, PlayerUp, PlayerDown
 PlayerAliveCheck
 EyeLock, EyeUnlock
 WallAndEyeLock
+StartingPlayerMark
 
 ======
 RULES
 ======
 
-[WallAndEyeLock] -> [Wall EyeLock]
 
-[PlayerRight] -> [ ]
-[PlayerLeft] -> [ ]
-[PlayerUp] -> [ ]
-[PlayerDown] -> [ ]
+[WallAndEyeLock] -> [Wall EyeLock]
+[PlayerUp no Player] -> [PlayerUp up Player StartingPlayerMark]
+[PlayerDown no Player] -> [PlayerDown down Player StartingPlayerMark]
+[PlayerLeft no Player] -> [PlayerLeft left Player StartingPlayerMark]
+[PlayerRight no Player] -> [PlayerRight right Player StartingPlayerMark]
+
+================
+
+[MovingPlayer] -> [ ]
 
 [right Player] -> [right Player right PlayerRight]
 [left Player] -> [left Player left PlayerLeft]
@@ -190,45 +200,13 @@ RULES
 
 [SeeingWall] -> [SeeingWallTemp]
 
-right [right PlayerRight | Wall] -> [PlayerRight | Wall]
-right [right PlayerRight | SeeingWallTemp] -> [PlayerRight | SeeingWallTemp]
-right [right PlayerRight | SeenWall] -> [PlayerRight | SeenWall]
-
-
-left [left PlayerLeft | Wall] -> [PlayerLeft | Wall]
-left [left PlayerLeft | SeeingWallTemp] -> [PlayerLeft | SeeingWallTemp]
-left [left PlayerLeft | SeenWall] -> [PlayerLeft | SeenWall]
-
-up [up PlayerUp | Wall] -> [PlayerUp | Wall]
-up [up PlayerUp | SeeingWallTemp] -> [PlayerUp | SeeingWallTemp]
-up [up PlayerUp | SeenWall] -> [PlayerUp | SeenWall]
-
-down [down PlayerDown | Wall] -> [PlayerDown | Wall]
-down [down PlayerDown | SeeingWallTemp] -> [PlayerDown | SeeingWallTemp]
-down [down PlayerDown | SeenWall] -> [PlayerDown | SeenWall]
-
-right [PlayerRight | ... | Wall] -> [PlayerRight | ... | SeeingWall]
-right [PlayerRight | ... | SeeingWallTemp] -> [PlayerRight | ... | SeeingWall]
-right [PlayerRight | ... | SeeingWall | ... | SeeingWall] -> [PlayerRight | ... | SeeingWall | ... | Wall]
-right [PlayerRight | ... | SeenWall | ... | SeeingWall] -> [PlayerRight | ... | SeenWall | ... | Wall]
-
-left [PlayerLeft | ... | Wall] -> [PlayerLeft | ... | SeeingWall]
-left [PlayerLeft | ... | SeeingWallTemp] -> [PlayerLeft | ... | SeeingWall]
-left [PlayerLeft | ... | SeeingWall | ... | SeeingWall] -> [PlayerLeft | ... | SeeingWall | ... | Wall]
-left [PlayerLeft | ... | SeenWall | ... | SeeingWall] -> [PlayerLeft | ... | SeenWall | ... | Wall]
-
-up [PlayerUp | ... | Wall] -> [PlayerUp | ... | SeeingWall]
-up [PlayerUp | ... | SeeingWallTemp] -> [PlayerUp | ... | SeeingWall]
-up [PlayerUp | ... | SeeingWall | ... | SeeingWall] -> [PlayerUp | ... | SeeingWall | ... | Wall]
-up [PlayerUp | ... | SeenWall | ... | SeeingWall] -> [PlayerUp | ... | SeenWall | ... | Wall]
-
-down [PlayerDown | ... | Wall] -> [PlayerDown | ... | SeeingWall]
-down [PlayerDown | ... | SeeingWallTemp] -> [PlayerDown | ... | SeeingWall]
-down [PlayerDown | ... | SeeingWall | ... | SeeingWall] -> [PlayerDown | ... | SeeingWall | ... | Wall]
-down [PlayerDown | ... | SeenWall | ... | SeeingWall] -> [PlayerDown | ... | SeenWall | ... | Wall]
+[> MovingPlayer | ... | Wall] -> [> MovingPlayer | ... | SeeingWall]
+[> MovingPlayer | ... | SeeingWallTemp] -> [> MovingPlayer | ... | SeeingWall]
+[> MovingPlayer | ... | VisionBlocker | ... | SeeingWall] -> [> MovingPlayer | ... | VisionBlocker | ... | Wall]
 
 [SeeingWallTemp] -> [SeenWall]
 
+[> MovingPlayer | Solid ] -> [MovingPlayer | Solid]
 
 [ moving Player ] -> [ moving PlayerAliveCheck ]
 [ moving PlayerAliveCheck | ... | SeeingWall ] -> [ moving Player | ... | SeeingWall ]
@@ -240,9 +218,13 @@ down [PlayerDown | ... | SeenWall | ... | SeeingWall] -> [PlayerDown | ... | See
 
 [ EyeLock SeeingWall] -> [EyeUnlock SeeingWall]
 
-[ Door ] -> [ TempDoor ]
-[ TempDoor | EyeLock ] -> [ Door | EyeLock ]
-[ TempDoor ] -> [ ]
+[ Gate ] -> [ TempGate ]
+[ TempGate | EyeLock ] -> [ Gate | EyeLock ]
+[ TempGate ] -> [ ]
+
+===============
+
+[moving Player moving MovingPlayer StartingPlayerMark] -> [Player MovingPlayer] 
 
 ==============
 WINCONDITIONS
@@ -258,8 +240,8 @@ MESSAGE Level 1: Over there
 
 #########
 #.......#
-#....#W##
-#.p...D.#
+#....#E##
+#.W...GQ#
 #....####
 #.......#
 #########
