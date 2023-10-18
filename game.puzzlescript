@@ -1,6 +1,7 @@
-title Bankoso
+title Orpheus
 author Illusion Fisherman
 homepage https://illusion-fisherman.itch.io/
+run_rules_on_level_start
 
 ========
 OBJECTS
@@ -102,6 +103,50 @@ BLACK #630000 #d61718
 00000
 00000
 
+WallAndEyeLock
+yellow #630000 #d61718
+.....
+.000.
+00200
+.000.
+.....
+
+EyeLock
+yellow
+.....
+..0..
+00000
+..0..
+.....
+
+EyeUnlock
+yellow red
+.....
+.000.
+00100
+.000.
+.....
+
+Door D
+yellow red
+.0.0.
+.0.0.
+00000
+.0.0.
+.0.0.
+
+TempDoor
+yellow
+
+
+Stairs
+black yellow
+.....
+11...
+011..
+0011.
+00011
+
 =======
 LEGEND
 =======
@@ -109,6 +154,8 @@ LEGEND
 . = Background
 P = Player
 # = Wall
+W = WallAndEyeLock
+S = Stairs
 
 =======
 SOUNDS
@@ -119,13 +166,18 @@ COLLISIONLAYERS
 ================
 
 Background
-Player, PlayerDead, Wall, SeenWall, SeeingWall, SeeingWallTemp
+Player, PlayerDead, Wall, SeenWall, SeeingWall, SeeingWallTemp, Door, TempDoor
 PlayerLeft, PlayerRight, PlayerUp, PlayerDown
 PlayerAliveCheck
+EyeLock, EyeUnlock
+WallAndEyeLock
 
 ======
 RULES
 ======
+
+[WallAndEyeLock] -> [Wall EyeLock]
+
 [PlayerRight] -> [ ]
 [PlayerLeft] -> [ ]
 [PlayerUp] -> [ ]
@@ -186,6 +238,12 @@ down [PlayerDown | ... | SeenWall | ... | SeeingWall] -> [PlayerDown | ... | See
 [ PlayerDead PlayerUp ] -> [ PlayerDead ]
 [ PlayerDead PlayerDown ] -> [ PlayerDead ]
 
+[ EyeLock SeeingWall] -> [EyeUnlock SeeingWall]
+
+[ Door ] -> [ TempDoor ]
+[ TempDoor | EyeLock ] -> [ Door | EyeLock ]
+[ TempDoor ] -> [ ]
+
 ==============
 WINCONDITIONS
 ==============
@@ -200,8 +258,8 @@ MESSAGE Level 1: Over there
 
 #########
 #.......#
-#.......#
-#.p.....#
+#....#W##
+#.p...D.#
 #....####
 #.......#
 #########
