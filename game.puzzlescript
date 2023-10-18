@@ -1,0 +1,163 @@
+title Bankoso
+author Illusion Fisherman
+homepage https://illusion-fisherman.itch.io/
+
+========
+OBJECTS
+========
+
+Background
+#525b5c #455b5c #444b5c
+00001
+00011
+00111
+01111
+11111
+
+Player
+#d61718 #ef6062 #001eef #e0e0e0
+.....
+.....
+..1..
+.....
+.....
+
+PlayerLeft
+#d61718 #ef6062 #001eef #e0e0e0
+.00..
+.330.
+.232.
+.222.
+.2.2.
+
+PlayerRight
+#d61718 #ef6062 #001eef #e0e0e0
+..00.
+.033.
+.232.
+.222.
+.2.2.
+
+PlayerUp
+#d61718 #ef6062 #001eef #e0e0e0
+.000.
+.222.
+32223
+.222.
+.2.2.
+
+PlayerDown
+#d61718 #ef6062 #001eef #e0e0e0
+.000.
+.333.
+33233
+32223
+.2.2.
+
+
+
+Wall
+BLACK #630000 #d61718
+00000
+22202
+11101
+00000
+10111
+
+SeeingWall
+BLACK #630000 #d61718
+11111
+11111
+11111
+11111
+11111
+
+SeeingWallTemp
+BLACK #630000 #d61718
+11111
+11111
+11111
+11111
+11111
+
+SeenWall
+BLACK #630000 #d61718
+00000
+00000
+00000
+00000
+00000
+
+=======
+LEGEND
+=======
+
+. = Background
+P = Player
+# = Wall
+
+=======
+SOUNDS
+=======
+
+================
+COLLISIONLAYERS
+================
+
+Background
+Player, Wall, SeenWall, SeeingWall, SeeingWallTemp
+PlayerLeft, PlayerRight, PlayerUp, PlayerDown
+
+======
+RULES
+======
+
+
+[left Player] -> [left Player left PlayerLeft]
+[right Player] -> [right Player right PlayerRight]
+[up Player] -> [up Player up PlayerUp]
+[down Player] -> [down Player down PlayerDown]
+
+
+
+[SeeingWall] -> [SeeingWallTemp]
+
+right [PlayerRight | ... | Wall] -> [PlayerRight | ... | SeeingWall]
+right [PlayerRight | ... | SeeingWallTemp] -> [PlayerRight | ... | SeeingWall]
+
+left [PlayerLeft | ... | Wall] -> [PlayerLeft | ... | SeeingWall]
+left [PlayerLeft | ... | SeeingWallTemp] -> [PlayerLeft | ... | SeeingWall]
+
+up [PlayerUp | ... | Wall] -> [PlayerUp | ... | SeeingWall]
+up [PlayerUp | ... | SeeingWallTemp] -> [PlayerUp | ... | SeeingWall]
+
+down [PlayerDown | ... | Wall] -> [PlayerDown | ... | SeeingWall]
+down [PlayerDown | ... | SeeingWallTemp] -> [PlayerDown | ... | SeeingWall]
+
+
+[SeeingWallTemp] -> [SeenWall]
+
+
+==============
+WINCONDITIONS
+==============
+
+
+
+=======
+LEVELS
+=======
+
+MESSAGE Level 1: Over there
+
+#########
+#.......#
+#.......#
+#.p.....#
+#....####
+#.......#
+#########
+
+
+MESSAGE Thank you for playing!
+
