@@ -22,6 +22,14 @@ Player
 .....
 .....
 
+PlayerDead
+#d61718 #ef6062 #001eef #e0e0e0
+.....
+.....
+..1..
+.....
+.....
+
 PlayerLeft
 #d61718 #ef6062 #001eef #e0e0e0
 .00..
@@ -53,8 +61,6 @@ PlayerDown
 33233
 32223
 .2.2.
-
-
 
 Wall
 BLACK #630000 #d61718
@@ -105,34 +111,56 @@ COLLISIONLAYERS
 ================
 
 Background
-Player, Wall, SeenWall, SeeingWall, SeeingWallTemp
+Player, PlayerDead, Wall, SeenWall, SeeingWall, SeeingWallTemp
 PlayerLeft, PlayerRight, PlayerUp, PlayerDown
 
 ======
 RULES
 ======
+[PlayerRight] -> [ ]
+[PlayerLeft] -> [ ]
+[PlayerUp] -> [ ]
+[PlayerDown] -> [ ]
 
+right [right Player | ... | SeenWall] -> [PlayerDead | ... | SeenWall]
+left [left Player | ... | SeenWall] -> [PlayerDead | ... | SeenWall]
+up [up Player | ... | SeenWall] -> [PlayerDead | ... | SeenWall]
+down [down Player | ... | SeenWall] -> [PlayerDead | ... | SeenWall]
 
-[left Player] -> [left Player left PlayerLeft]
 [right Player] -> [right Player right PlayerRight]
+[left Player] -> [left Player left PlayerLeft]
 [up Player] -> [up Player up PlayerUp]
 [down Player] -> [down Player down PlayerDown]
 
-
-
 [SeeingWall] -> [SeeingWallTemp]
+
+right [right PlayerRight | Wall] -> [PlayerRight | Wall]
+right [right PlayerRight | SeeingWallTemp] -> [PlayerRight | SeeingWallTemp]
+
+up [up PlayerUp | Wall] -> [PlayerUp | Wall]
+up [up PlayerUp | SeeingWallTemp] -> [PlayerUp | SeeingWallTemp]
+
+left [left PlayerLeft | Wall] -> [PlayerLeft | Wall]
+left [left PlayerLeft | SeeingWallTemp] -> [PlayerLeft | SeeingWallTemp]
+
+down [down PlayerDown | Wall] -> [PlayerDown | Wall]
+down [down PlayerDown | SeeingWallTemp] -> [PlayerDown | SeeingWallTemp]
 
 right [PlayerRight | ... | Wall] -> [PlayerRight | ... | SeeingWall]
 right [PlayerRight | ... | SeeingWallTemp] -> [PlayerRight | ... | SeeingWall]
+right [SeeingWall | ... | SeeingWall] -> [SeeingWall | ... | Wall]
 
 left [PlayerLeft | ... | Wall] -> [PlayerLeft | ... | SeeingWall]
 left [PlayerLeft | ... | SeeingWallTemp] -> [PlayerLeft | ... | SeeingWall]
+left [SeeingWall | ... | SeeingWall] -> [SeeingWall | ... | Wall]
 
 up [PlayerUp | ... | Wall] -> [PlayerUp | ... | SeeingWall]
 up [PlayerUp | ... | SeeingWallTemp] -> [PlayerUp | ... | SeeingWall]
+up [SeeingWall | ... | SeeingWall] -> [SeeingWall | ... | Wall]
 
 down [PlayerDown | ... | Wall] -> [PlayerDown | ... | SeeingWall]
 down [PlayerDown | ... | SeeingWallTemp] -> [PlayerDown | ... | SeeingWall]
+down [SeeingWall | ... | SeeingWall] -> [SeeingWall | ... | Wall]
 
 
 [SeeingWallTemp] -> [SeenWall]
