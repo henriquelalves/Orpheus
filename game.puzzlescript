@@ -22,12 +22,20 @@ Player
 .....
 .....
 
-PlayerDead
+PlayerAliveCheck
 #d61718 #ef6062 #001eef #e0e0e0
 .....
 .....
-..1..
+..2..
 .....
+.....
+
+PlayerDead
+#d61718 #ef6062 #001eef #e0e0e0
+.....
+.1.1.
+..1..
+.1.1.
 .....
 
 PlayerLeft
@@ -82,7 +90,7 @@ SeeingWallTemp
 BLACK #630000 #d61718
 11111
 11111
-11111
+11011
 11111
 11111
 
@@ -113,6 +121,7 @@ COLLISIONLAYERS
 Background
 Player, PlayerDead, Wall, SeenWall, SeeingWall, SeeingWallTemp
 PlayerLeft, PlayerRight, PlayerUp, PlayerDown
+PlayerAliveCheck
 
 ======
 RULES
@@ -121,11 +130,6 @@ RULES
 [PlayerLeft] -> [ ]
 [PlayerUp] -> [ ]
 [PlayerDown] -> [ ]
-
-right [right Player | ... | SeenWall] -> [PlayerDead | ... | SeenWall]
-left [left Player | ... | SeenWall] -> [PlayerDead | ... | SeenWall]
-up [up Player | ... | SeenWall] -> [PlayerDead | ... | SeenWall]
-down [down Player | ... | SeenWall] -> [PlayerDead | ... | SeenWall]
 
 [right Player] -> [right Player right PlayerRight]
 [left Player] -> [left Player left PlayerLeft]
@@ -136,35 +140,51 @@ down [down Player | ... | SeenWall] -> [PlayerDead | ... | SeenWall]
 
 right [right PlayerRight | Wall] -> [PlayerRight | Wall]
 right [right PlayerRight | SeeingWallTemp] -> [PlayerRight | SeeingWallTemp]
+right [right PlayerRight | SeenWall] -> [PlayerRight | SeenWall]
 
-up [up PlayerUp | Wall] -> [PlayerUp | Wall]
-up [up PlayerUp | SeeingWallTemp] -> [PlayerUp | SeeingWallTemp]
 
 left [left PlayerLeft | Wall] -> [PlayerLeft | Wall]
 left [left PlayerLeft | SeeingWallTemp] -> [PlayerLeft | SeeingWallTemp]
+left [left PlayerLeft | SeenWall] -> [PlayerLeft | SeenWall]
+
+up [up PlayerUp | Wall] -> [PlayerUp | Wall]
+up [up PlayerUp | SeeingWallTemp] -> [PlayerUp | SeeingWallTemp]
+up [up PlayerUp | SeenWall] -> [PlayerUp | SeenWall]
 
 down [down PlayerDown | Wall] -> [PlayerDown | Wall]
 down [down PlayerDown | SeeingWallTemp] -> [PlayerDown | SeeingWallTemp]
+down [down PlayerDown | SeenWall] -> [PlayerDown | SeenWall]
 
 right [PlayerRight | ... | Wall] -> [PlayerRight | ... | SeeingWall]
 right [PlayerRight | ... | SeeingWallTemp] -> [PlayerRight | ... | SeeingWall]
-right [SeeingWall | ... | SeeingWall] -> [SeeingWall | ... | Wall]
+right [PlayerRight | ... | SeeingWall | ... | SeeingWall] -> [PlayerRight | ... | SeeingWall | ... | Wall]
+right [PlayerRight | ... | SeenWall | ... | SeeingWall] -> [PlayerRight | ... | SeenWall | ... | Wall]
 
 left [PlayerLeft | ... | Wall] -> [PlayerLeft | ... | SeeingWall]
 left [PlayerLeft | ... | SeeingWallTemp] -> [PlayerLeft | ... | SeeingWall]
-left [SeeingWall | ... | SeeingWall] -> [SeeingWall | ... | Wall]
+left [PlayerLeft | ... | SeeingWall | ... | SeeingWall] -> [PlayerLeft | ... | SeeingWall | ... | Wall]
+left [PlayerLeft | ... | SeenWall | ... | SeeingWall] -> [PlayerLeft | ... | SeenWall | ... | Wall]
 
 up [PlayerUp | ... | Wall] -> [PlayerUp | ... | SeeingWall]
 up [PlayerUp | ... | SeeingWallTemp] -> [PlayerUp | ... | SeeingWall]
-up [SeeingWall | ... | SeeingWall] -> [SeeingWall | ... | Wall]
+up [PlayerUp | ... | SeeingWall | ... | SeeingWall] -> [PlayerUp | ... | SeeingWall | ... | Wall]
+up [PlayerUp | ... | SeenWall | ... | SeeingWall] -> [PlayerUp | ... | SeenWall | ... | Wall]
 
 down [PlayerDown | ... | Wall] -> [PlayerDown | ... | SeeingWall]
 down [PlayerDown | ... | SeeingWallTemp] -> [PlayerDown | ... | SeeingWall]
-down [SeeingWall | ... | SeeingWall] -> [SeeingWall | ... | Wall]
-
+down [PlayerDown | ... | SeeingWall | ... | SeeingWall] -> [PlayerDown | ... | SeeingWall | ... | Wall]
+down [PlayerDown | ... | SeenWall | ... | SeeingWall] -> [PlayerDown | ... | SeenWall | ... | Wall]
 
 [SeeingWallTemp] -> [SeenWall]
 
+
+[ moving Player ] -> [ moving PlayerAliveCheck ]
+[ moving PlayerAliveCheck | ... | SeeingWall ] -> [ moving Player | ... | SeeingWall ]
+[ PlayerAliveCheck ] -> [ PlayerDead ]
+[ PlayerDead PlayerLeft ] -> [ PlayerDead ]
+[ PlayerDead PlayerRight ] -> [ PlayerDead ]
+[ PlayerDead PlayerUp ] -> [ PlayerDead ]
+[ PlayerDead PlayerDown ] -> [ PlayerDead ]
 
 ==============
 WINCONDITIONS
