@@ -98,7 +98,7 @@ BLACK #630000 #d61718
 11111
 11111
 
-SeenWall
+SeenWall X
 BLACK #630000 #d61718
 00000
 00000
@@ -150,6 +150,78 @@ black yellow
 0011.
 00011
 
+PowerOnTile
+yellow
+00000
+00000
+00000
+00000
+00000
+
+PowerOffTile
+black
+00000
+00000
+00000
+00000
+00000
+
+WireUD H
+#525b5c #455b5c #444b5c black
+00.01
+00.11
+00.11
+01.11
+11.11
+
+WireUL J
+#525b5c #455b5c #444b5c
+00.01
+00.11
+...11
+01111
+11111
+
+WireUR K
+#525b5c #455b5c #444b5c
+00.01
+00.11
+00...
+01111
+11111
+
+WireLR L
+#525b5c #455b5c #444b5c
+00001
+00011
+.....
+01111
+11111
+
+WireLD N
+#525b5c #455b5c #444b5c
+00001
+00011
+...11
+01.11
+11.11
+
+WireRD M
+#525b5c #455b5c #444b5c
+00001
+00011
+00...
+01.11
+11.11
+
+WireUDLR
+#525b5c #455b5c #444b5c
+00.01
+00.11
+.....
+01.11
+11.11
+
 =======
 LEGEND
 =======
@@ -161,6 +233,12 @@ MovingPlayer = PlayerUp or PlayerDown or PlayerLeft or PlayerRight
 Solid = Wall or SeeingWall or SeeingWallTemp or SeenWall or Gate or TempGate
 VisionBlocker = Wall or SeeingWall or SeeingWallTemp or SeenWall
 
+Wire = WireUD or WireUL or WireUR or WireLR or WireLD or WireRD or WireUDLR
+WireU = WireUD or WireUL or WireUR or WireUDLR
+WireL = WireUL or WireLR or WireLD or WireUDLR
+WireR = WireUR or WireLR or WireRD or WireUDLR
+WireD = WireUD or WireLD or WireRD or WireUDLR
+
 =======
 SOUNDS
 =======
@@ -170,6 +248,8 @@ COLLISIONLAYERS
 ================
 
 Background
+PowerOnTile, PowerOffTile
+WireUD, WireUL, WireUR, WireLR, WireLD, WireRD, WireUDLR
 Stairs
 Player, PlayerDead, Wall, SeenWall, SeeingWall, SeeingWallTemp, Gate, TempGate
 PlayerLeft, PlayerRight, PlayerUp, PlayerDown
@@ -183,21 +263,24 @@ RULES
 ======
 
 
+(Stage setup)
 [WallAndEyeLock] -> [Wall EyeLock]
 [PlayerUp no Player] -> [PlayerUp up Player StartingPlayerMark]
 [PlayerDown no Player] -> [PlayerDown down Player StartingPlayerMark]
 [PlayerLeft no Player] -> [PlayerLeft left Player StartingPlayerMark]
 [PlayerRight no Player] -> [PlayerRight right Player StartingPlayerMark]
 
-================
+[Wire no PowerOnTile no PowerOffTile] -> [Wire PowerOffTile]
+[EyeLock no PowerOffTile] -> [EyeLock PowerOffTile WireUDLR]
 
+(Set player movement sprite)
 [MovingPlayer] -> [ ]
-
 [right Player] -> [right Player right PlayerRight]
 [left Player] -> [left Player left PlayerLeft]
 [up Player] -> [up Player up PlayerUp]
 [down Player] -> [down Player down PlayerDown]
 
+(Set seen walls)
 [SeeingWall] -> [SeeingWallTemp]
 
 [> MovingPlayer | ... | Wall] -> [> MovingPlayer | ... | SeeingWall]
@@ -206,30 +289,47 @@ RULES
 
 [SeeingWallTemp] -> [SeenWall]
 
+(Stop player on walls)
 [> MovingPlayer | Solid ] -> [MovingPlayer | Solid]
 
+(Dead check)
 [ moving Player ] -> [ moving PlayerAliveCheck ]
 [ moving PlayerAliveCheck | ... | SeeingWall ] -> [ moving Player | ... | SeeingWall ]
+
 [ PlayerAliveCheck ] -> [ PlayerDead ]
 [ PlayerDead PlayerLeft ] -> [ PlayerDead ]
 [ PlayerDead PlayerRight ] -> [ PlayerDead ]
 [ PlayerDead PlayerUp ] -> [ PlayerDead ]
 [ PlayerDead PlayerDown ] -> [ PlayerDead ]
 
+(Eye lock)
 [ EyeLock SeeingWall] -> [EyeUnlock SeeingWall]
+[EyeUnlock PowerOffTile] -> [EyeUnlock PowerOnTile]
 
+
+startloop
+up [ WireU PowerOffTile | WireD PowerOnTile ] -> [ WireU PowerOnTile | WireD PowerOnTile ]
+down [ WireD PowerOffTile | WireU PowerOnTile ] -> [ WireD PowerOnTile | WireU PowerOnTile ]
+left [ WireL PowerOffTile | WireR PowerOnTile ] -> [ WireL PowerOnTile | WireR PowerOnTile ]
+right [ WireR PowerOffTile | WireL PowerOnTile ] -> [ WireR PowerOnTile | WireL PowerOnTile ]
+endloop
+
+(Gate)
 [ Gate ] -> [ TempGate ]
-[ TempGate | EyeLock ] -> [ Gate | EyeLock ]
+up [ TempGate | PowerOffTile WireD ] -> [ Gate | PowerOffTile WireD ]
+down [ TempGate | PowerOffTile WireU ] -> [ Gate | PowerOffTile WireU ]
+left [ TempGate | PowerOffTile WireR ] -> [ Gate | PowerOffTile WireR ]
+right [ TempGate | PowerOffTile WireL ] -> [ Gate | PowerOffTile WireL ]
 [ TempGate ] -> [ ]
 
-===============
-
+(Start stage setup)
 [moving Player moving MovingPlayer StartingPlayerMark] -> [Player MovingPlayer] 
 
 ==============
 WINCONDITIONS
 ==============
 
+Some Player on Stairs
 
 
 =======
@@ -239,13 +339,77 @@ LEVELS
 MESSAGE Level 1: Over there
 
 #########
-#.......#
-#....#E##
-#.W...GQ#
-#....####
-#.......#
+#S#######
+#.#######
+#.#######
+#......Q#
 #########
 
+#########
+#.......#
+#.x...#.#
+#...#..##
+#w...#.q#
+#########
+
+#######
+#.s...#
+#mlllle
+#h.#e##
+#h.#h.#
+#g##h.#
+#..gj.#
+#######
+
+xxxxxxxx
+x.xqx..x
+x..g.#.x
+x..kln.x
+x.#sgh.x
+ellljh#x
+x..#.h.x
+xxxxxexx
+
+############
+#s.#.......#
+#.......#..#
+#..##.#....#
+#...#....#.#
+#.#...#....#
+#...#....###
+#..#.......#
+#......#...#
+############
+
+#######
+#.s.#q#
+#...#g#
+#...xh#
+#mlnxh#
+#g#e.h#
+#....h#
+#####e#
+
+#########
+#.......#
+#.x...#.#
+#...#..##
+#w...#.q#
+#########
+
+#######
+##.g.s#
+##ee..#
+#qg...#
+#######
+
+#########
+#......##
+#...#e.##
+##.#qgg.#
+#...#ge.#
+#w....#.#
+#########
 
 MESSAGE Thank you for playing!
 
