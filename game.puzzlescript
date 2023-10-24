@@ -141,15 +141,6 @@ yellow red
 TempGate
 yellow
 
-
-Stairs Q
-black yellow
-.....
-11...
-011..
-0011.
-00011
-
 PowerOnTile
 yellow
 00000
@@ -250,7 +241,6 @@ COLLISIONLAYERS
 Background
 PowerOnTile, PowerOffTile
 WireUD, WireUL, WireUR, WireLR, WireLD, WireRD, WireUDLR
-Stairs
 Player, PlayerDead, Wall, SeenWall, SeeingWall, SeeingWallTemp, Gate, TempGate
 PlayerLeft, PlayerRight, PlayerUp, PlayerDown
 PlayerAliveCheck
@@ -329,27 +319,43 @@ right [ TempGate | PowerOffTile WireL ] -> [ Gate | PowerOffTile WireL ]
 WINCONDITIONS
 ==============
 
-Some Player on Stairs
+No EyeLock
 
 
 =======
 LEVELS
 =======
 
-MESSAGE Level 1: Over there
+MESSAGE yagheossirelmeuq
+
+######
+#..s.#
+#e#..#
+#....#
+#...e#
+######
 
 #########
-#S#######
-#.#######
-#.#######
-#......Q#
+#..g#g..#
+#.#h.h#.#
+#.#hsh#.#
+#.ej.ke.#
+#e#####e#
+
+#########
+#s....e.#
+#.e.e.mg#
+#.....e.#
+#.e..e.e#
 #########
 
+(Old stages)
+(
 #########
 #.......#
 #.x...#.#
 #...#..##
-#w...#.q#
+#w...#..#
 #########
 
 #######
@@ -362,7 +368,7 @@ MESSAGE Level 1: Over there
 #######
 
 xxxxxxxx
-x.xqx..x
+x.x.x..x
 x..g.#.x
 x..kln.x
 x.#sgh.x
@@ -382,7 +388,7 @@ xxxxxexx
 ############
 
 #######
-#.s.#q#
+#.s.#.#
 #...#g#
 #...xh#
 #mlnxh#
@@ -394,22 +400,23 @@ xxxxxexx
 #.......#
 #.x...#.#
 #...#..##
-#w...#.q#
+#w...#..#
 #########
 
 #######
 ##.g.s#
 ##ee..#
-#qg...#
+#.g...#
 #######
 
 #########
 #......##
 #...#e.##
-##.#qgg.#
+##.#.gg.#
 #...#ge.#
 #w....#.#
 #########
+)
 
-MESSAGE Thank you for playing!
+MESSAGE Jobi Joba cada dia yo te quiero mas!
 
