@@ -15,6 +15,13 @@ Background
 01111
 11111
 
+PlayerVisionMark
+#fbfcfb
+.....
+.....
+..0..
+.....
+.....
 
 Player
 #d61718 #ef6062 #001eef #e0e0e0
@@ -44,7 +51,7 @@ PlayerDead
 .....
 
 PlayerLeft A
-#d61718 #ef6062 #001eef #e0e0e0
+#332522 #ef6062 #de7c13 #e0e0e0
 .00..
 .330.
 .232.
@@ -52,7 +59,7 @@ PlayerLeft A
 .2.2.
 
 PlayerRight D
-#d61718 #ef6062 #001eef #e0e0e0
+#332522 #ef6062 #de7c13 #e0e0e0
 ..00.
 .033.
 .232.
@@ -60,18 +67,18 @@ PlayerRight D
 .2.2.
 
 PlayerUp W
-#d61718 #ef6062 #001eef #e0e0e0
+#332522 #ef6062 #de7c13 #e0e0e0
 .000.
-.222.
+.000.
 32223
 .222.
 .2.2.
 
 PlayerDown S
-#d61718 #ef6062 #001eef #e0e0e0
+#332522 #ef6062 #de7c13 #e0e0e0
 .000.
-.333.
-33233
+.332.
+33223
 32223
 .2.2.
 
@@ -100,12 +107,12 @@ black
 .....
 
 SeenWall X
-#a2592f #cab170 #12111f #09249f
-22222
-22222
-22322
-22222
-22222
+#a2592f #cab170 #12111f #09249f #18151f
+24242
+42424
+24242
+42424
+24242
 
 WallAndEyeLock E
 #afaa99 #251a5e #358fc3
@@ -116,7 +123,7 @@ WallAndEyeLock E
 .....
 
 EyeLock
-#fbfcfb #26aacf  #12111f #09249f
+#26aacf #26aacf  #12111f #09249f
 20002
 00200
 22222
@@ -132,7 +139,7 @@ EyeUnlock
 00100
 
 Gate G
-#fbfcfb #26aacf
+#26aacf #26aacf
 0...0
 0.0.0
 0.0.0
@@ -242,6 +249,7 @@ COLLISIONLAYERS
 Background
 PowerOnTile, PowerOffTile
 WireUD, WireUL, WireUR, WireLR, WireLD, WireRD, WireUDLR
+PlayerVisionMark
 Player, PlayerDead, Wall, SeenWall, SeeingWall, SeeingWallTemp, Gate, TempGate
 PlayerLeft, PlayerRight, PlayerUp, PlayerDown
 PlayerAliveCheck
@@ -270,6 +278,7 @@ RULES
 [left Player] -> [left Player left PlayerLeft]
 [up Player] -> [up Player up PlayerUp]
 [down Player] -> [down Player down PlayerDown]
+[PlayerVisionMark] -> [ ]
 
 (Set seen walls)
 [SeeingWall] -> [SeeingWallTemp]
@@ -280,8 +289,20 @@ RULES
 
 [SeeingWallTemp] -> [SeenWall]
 
+(Vision)
+[> movingplayer | ... | no PlayerVisionmark | ... | VisionBlocker ] -> [> MovingPlayer | ... | PlayerVisionMark | ... | VisionBlocker]
+[> movingplayer | ... | VisionBlocker | ... | PlayerVisionMark ] -> [> movingplayer | ... | VisionBlocker | ... |  ]
+(up [ PlayerUp | ... | no PlayerVisionMark | ... | VisionBlocker ] -> [ PlayerUp | ... | PlayerVisionMark | ... | visionblocker ]
+down [ PlayerDown | ... | no PlayerVisionMark | ... | VisionBlocker ] -> [ PlayerDown | ... | PlayerVisionMark | ... | visionblocker ]
+left [ PlayerLeft | ... | no PlayerVisionMark | ... | VisionBlocker ] -> [ PlayerLeft | ... | PlayerVisionMark | ... | visionblocker ]
+right [ PlayerRight | ... | no PlayerVisionMark | ... | VisionBlocker ] -> [ PlayerRight | ... | PlayerVisionMark | ... | visionblocker ])
+
+(Start stage setup)
+[moving Player moving MovingPlayer StartingPlayerMark] -> [Player MovingPlayer] 
+
 (Stop player on walls)
 [> MovingPlayer | Solid ] -> [MovingPlayer | Solid]
+
 
 (Dead check)
 [ moving Player ] -> [ moving PlayerAliveCheck ]
@@ -306,15 +327,12 @@ right [ WireR PowerOffTile | WireL PowerOnTile ] -> [ WireR PowerOnTile | WireL 
 endloop
 
 (Gate)
-[ Gate ] -> [ TempGate ]
-up [ TempGate | PowerOffTile WireD ] -> [ Gate | PowerOffTile WireD ]
-down [ TempGate | PowerOffTile WireU ] -> [ Gate | PowerOffTile WireU ]
-left [ TempGate | PowerOffTile WireR ] -> [ Gate | PowerOffTile WireR ]
-right [ TempGate | PowerOffTile WireL ] -> [ Gate | PowerOffTile WireL ]
-[ TempGate ] -> [ ]
-
-(Start stage setup)
-[moving Player moving MovingPlayer StartingPlayerMark] -> [Player MovingPlayer] 
+late [ Gate ] -> [ TempGate ]
+late up [ TempGate | PowerOffTile WireD ] -> [ Gate | PowerOffTile WireD ]
+late down [ TempGate | PowerOffTile WireU ] -> [ Gate | PowerOffTile WireU ]
+late left [ TempGate | PowerOffTile WireR ] -> [ Gate | PowerOffTile WireR ]
+late right [ TempGate | PowerOffTile WireL ] -> [ Gate | PowerOffTile WireL ]
+late [ TempGate ] -> [ ]
 
 ==============
 WINCONDITIONS
@@ -327,7 +345,7 @@ No EyeLock
 LEVELS
 =======
 
-MESSAGE yagheossirelmeuq
+MESSAGE Open all the eyes
 
 ######
 #..s.#
@@ -336,12 +354,34 @@ MESSAGE yagheossirelmeuq
 #...e#
 ######
 
+MESSAGE Eyes open gates
+
 #########
 #..g#g..#
 #.#h.h#.#
 #.#hsh#.#
 #.ej.ke.#
 #e#####e#
+
+MESSAGE Level 1
+
+#######
+#e.#..#
+#.....#
+##e..e#
+#e...##
+##e#.w#
+#######
+
+MESSAGE Level 2
+
+###x#######
+#.elg.xg.e#
+#...e..he.#
+#d#....kle#
+###########
+
+MESSAGE Level 3
 
 #########
 #s....e.#
@@ -350,74 +390,15 @@ MESSAGE yagheossirelmeuq
 #.e..e.e#
 #########
 
-(Old stages)
-(
-#########
-#.......#
-#.x...#.#
-#...#..##
-#w...#..#
-#########
-
-#######
-#.s...#
-#mlllle
-#h.#e##
-#h.#h.#
-#g##h.#
-#..gj.#
-#######
+MESSAGE Level 4
 
 xxxxxxxx
-x.x.x..x
-x..g.#.x
-x..kln.x
-x.#sgh.x
-ellljh#x
-x..#.h.x
-xxxxxexx
+#..s..e#
+#e...e.#
+#.x..x.#
+#......#
+#.e.x.e#
+########
 
-############
-#s.#.......#
-#.......#..#
-#..##.#....#
-#...#....#.#
-#.#...#....#
-#...#....###
-#..#.......#
-#......#...#
-############
-
-#######
-#.s.#.#
-#...#g#
-#...xh#
-#mlnxh#
-#g#e.h#
-#....h#
-#####e#
-
-#########
-#.......#
-#.x...#.#
-#...#..##
-#w...#..#
-#########
-
-#######
-##.g.s#
-##ee..#
-#.g...#
-#######
-
-#########
-#......##
-#...#e.##
-##.#.gg.#
-#...#ge.#
-#w....#.#
-#########
-)
-
-MESSAGE Jobi Joba cada dia yo te quiero mas!
+MESSAGE Thank you for playing!
 
